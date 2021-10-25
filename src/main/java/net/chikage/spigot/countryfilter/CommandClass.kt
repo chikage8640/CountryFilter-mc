@@ -16,8 +16,9 @@ class CommandClass(
     private val plugin: CountryFilterPlugin
 ) : CommandExecutor {
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<String>): Boolean {
-        when(command.name.lowercase()) {
+        when (val commandName = command.name.lowercase()) {
             "ipinfo" -> ipInfo(sender, args.toList())
+            else -> sender.sendMessage("Unknown command $commandName")
         }
         return true
     }
