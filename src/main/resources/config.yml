@@ -1,0 +1,13 @@
+geoipDb: "/usr/share/GeoIP/GeoLite2-Country.mmdb"
+useWhitelist: false
+useBlacklist: false
+kickMessage: "This server can only be connected to from authorized countries."
+whitelist:
+  0: "LOOPBACK"
+  1: "PRIVATE"
+blacklist:
+  0: "UNKNOWN"
+  1: "TESTNET"
+  2: "INTERNET"
+  3: "SHARED"
+  4: "SUBNET"

@@ -1,0 +1,10 @@
+name: CountryFilter
+version: '${version}'
+main: net.chikage.spigot.countryfilter.CountryFilterPlugin
+api-version: 1.17
+authors: [ Chikage Haruse ]
+description: Filterling country by IP address.
+website: https://chikage.net
+commands:
+  ipinfo:
+    description: GeoIP2を検索し、国コードとログインの可否を返します。
