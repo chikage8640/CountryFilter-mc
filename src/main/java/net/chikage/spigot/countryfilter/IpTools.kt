@@ -23,7 +23,7 @@ class IpTools(
         val whitelisted = config.useWhitelist && country in config.whitelist
         val blacklisted = config.useBlacklist && country in config.blacklist
 
-        return whitelisted && !blacklisted
+        return whitelisted || !blacklisted
     }
 
     /**
