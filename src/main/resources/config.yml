@@ -3,11 +3,11 @@ useWhitelist: false
 useBlacklist: false
 kickMessage: "This server can only be connected to from authorized countries."
 whitelist:
-  0: "LOOPBACK"
-  1: "PRIVATE"
+  - "LOOPBACK"
+  - "PRIVATE"
 blacklist:
-  0: "UNKNOWN"
-  1: "TESTNET"
-  2: "INTERNET"
-  3: "SHARED"
-  4: "SUBNET"
+  - "UNKNOWN"
+  - "TESTNET"
+  - "INTERNET"
+  - "SHARED"
+  - "SUBNET"
