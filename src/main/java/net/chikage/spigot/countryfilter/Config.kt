@@ -1,55 +1,62 @@
 package net.chikage.spigot.countryfilter
 
-import org.bukkit.configuration.file.FileConfiguration
-import org.bukkit.plugin.Plugin
+import org.bukkit.configuration.file.YamlConfiguration
+import java.nio.file.Path
+import java.util.logging.Logger
+import kotlin.io.path.bufferedReader
 
 /**
  * 設定をまとめて取り扱う構造体
  * @author HimaJyun
  */
-class Config(plugin: Plugin) {
-    private val plugin: Plugin
-    private var config: FileConfiguration? = null
+class Config (
+    private val logger: Logger,
+    private val path: Path,
+) {
+    private val config = YamlConfiguration().apply {
+        load(path.bufferedReader())
+    }
+
+    init {
+        reload()
+    }
 
     /**
      * 設定をロードします
      */
-    fun load() {
-        // 設定ファイルを保存
-        plugin.saveDefaultConfig()
-        if (config != null) { // configが非null == リロードで呼び出された
-            plugin.reloadConfig()
-        }
-        config = plugin.config
-
-        // 各設定の変数への代入
-        geoipDb = config?.getString("geoipDb") ?: geoipDb
-        usableWhitelist = config?.getBoolean("useWhitelist") ?: false
-        usableBlacklist = config?.getBoolean("useBlacklist") ?: false
-        kickMessage = config?.getString("kickMessage") ?: kickMessage
-        countryWhitelist = getStringConfigList("whitelist")
-        countryBlacklist = getStringConfigList("blacklist")
-
-
+    fun reload() {
+        config.load(path.bufferedReader())
     }
 
-    /**
-     * 設定のリストをMutableListにする。（ホワイトリストとブラックリストの読み出し用）
-     */
-    private fun getStringConfigList(configListKey: String): MutableList<String> {
-        val answerList: MutableList<String> = mutableListOf() // 返答用リスト
-        val configList = config?.getConfigurationSection(configListKey)?.getKeys(false) // 設定の生データ
-        if(configList != null){ // 設定のnullチェック
-            for (key: String in configList) { // ループで整形する
-                answerList.add(config!!.getString("$configListKey.$key")!!) // 値を返答用リストに追加
-            }
-        }
-        return answerList
+    val geoipDb: String
+        get() = config.getString("geoipDb") ?: fallback("geoipDb", DEFAULT_GEOIP_DB)
+
+    val useWhitelist: Boolean
+        get() = config.get("useWhitelist") as? Boolean? ?: fallback("useWhitelist", false)
+
+    val useBlacklist: Boolean
+        get() = config.get("useBlacklist") as? Boolean? ?: fallback("useBlacklist", false)
+
+    val kickMessage: String
+        get() = config.getString("kickMessage") ?: fallback("kickMessage", DEFAULT_KICK_MESSAGE)
+
+    val whitelist: List<String>
+        get() = config.getStringList("whitelist")
+
+    val blacklist: List<String>
+        get() = config.getStringList("blacklist")
+
+    private fun <T> fallback(propertyName: String, fallback: T): T {
+        logger.warning("property '$propertyName' is not set, fallback to $fallback")
+        return fallback
     }
 
-    init {
-        this.plugin = plugin
-        // ロードする
-        load()
+    companion object {
+        /**
+         * geoipDbのデフォルト位置
+         */
+        private const val DEFAULT_GEOIP_DB = "/usr/share/GeoIP/GeoLite2-City.mmdb"
+
+        private const val DEFAULT_KICK_MESSAGE = "This server can only be connected to from authorized countries."
     }
 }
